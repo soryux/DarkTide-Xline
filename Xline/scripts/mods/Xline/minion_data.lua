@@ -7,8 +7,8 @@ m.names.近战小兵 = {
 	"chaos_poxwalker",
 	"cultist_melee",
 	"renegade_melee",
-	"chaos_lesser_mutated_poxwalker",--会发光的小兵，混沌次级变异瘟疫行者
-	"chaos_mutated_poxwalker",--会发光的小兵，混沌变异瘟疫行者
+	"chaos_lesser_mutated_poxwalker",
+	"chaos_mutated_poxwalker",
 }
 
 m.names.远程小兵 = {
@@ -35,19 +35,19 @@ m.names.怪物= {
 }
 
 m.names.专家 = {
-	"chaos_poxwalker_bomber",--自爆
-	"renegade_grenadier",--火雷
-	"cultist_grenadier",--毒雷-tou
-	"renegade_sniper", --狙击
-	"renegade_flamer",--喷火兵-tou
-	"cultist_flamer",--喷毒哥-tou
+	"chaos_poxwalker_bomber",
+	"renegade_grenadier",
+	"cultist_grenadier",
+	"renegade_sniper",
+	"renegade_flamer",
+	"cultist_flamer",
 }
 
 m.names.控制型专家 = {
-	"chaos_hound",--狗
+	"chaos_hound",
 	"chaos_hound_mutator",
-	"cultist_mutant", --牛
-	"renegade_netgunner",  --网子哥
+	"cultist_mutant",
+	"renegade_netgunner",
 }
 
 m.names.远程精英 = {
@@ -56,12 +56,13 @@ m.names.远程精英 = {
 	"cultist_shocktrooper",
 	"renegade_shocktrooper",
 	"chaos_ogryn_gunner",
-	"renegade_plasma_gunner",--等离子哥
+	"renegade_plasma_gunner",
 }
 
 m.display_name = {
 	chaos_hound_mutator = "脆皮猎犬",
 	chaos_plague_ogryn = "loc_breed_display_name_chaos_plage_ogryn",
 }
+
 
 return m
