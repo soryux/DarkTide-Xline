@@ -47,6 +47,7 @@ m.names.控制型专家 = {
 	"chaos_hound",
 	"chaos_hound_mutator",
 	"cultist_mutant",
+	"cultist_mutant_mutator",
 	"renegade_netgunner",
 }
 
@@ -66,3 +67,4 @@ m.display_name = {
 
 
 return m
+
