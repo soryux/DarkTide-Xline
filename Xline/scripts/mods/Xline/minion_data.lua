@@ -62,9 +62,11 @@ m.names.远程精英 = {
 
 m.display_name = {
 	chaos_hound_mutator = "脆皮猎犬",
+	cultist_mutant_mutator = "脆皮变种人",
 	chaos_plague_ogryn = "loc_breed_display_name_chaos_plage_ogryn",
 }
 
 
 return m
+
 
