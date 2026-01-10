@@ -1,6 +1,6 @@
 local mod = get_mod("Xline")
 local OutlineSettings = require("scripts/settings/outline/outline_settings")
-local minion_data = mod:io_dofile("Xline/scripts/mods/Xline/minion_data")
+local breed_data = mod:io_dofile("Xline/scripts/mods/Xline/Xbreed")
 
 local recover_override_settings = function() end
 local override_settings = function() end
@@ -91,41 +91,43 @@ end
 override_settings = function()
     local Vector3_distance_squared = Vector3.distance_squared
     local Unit_local_position = Unit.local_position
-    
-    local render_dist = mod:get("render_distance") or 30
-    local MAX_DIST_SQ = render_dist * render_dist
 
-    local function check_distance_visibility(unit)
-        if not unit or not Unit.alive(unit) then return false end
-        if not HEALTH_ALIVE[unit] then return false end
-
-        local player_manager = Managers.player
-        if not player_manager then return false end
-        
-        local local_player = player_manager:local_player(1)
-        if not local_player then return false end
-        
-        local player_unit = local_player.player_unit
-        if not player_unit then return false end
-
-        local unit_pos = Unit_local_position(unit, 1)
-        local player_pos = Unit_local_position(player_unit, 1)
-        
-        return Vector3_distance_squared(unit_pos, player_pos) < MAX_DIST_SQ
-    end
-
-    if minion_data and minion_data.names then
-        for _, breed_list in pairs(minion_data.names) do
-            for _, breed_name in ipairs(breed_list) do
-                local r = mod:get("minion_" .. breed_name .. "_r") or 255
-                local g = mod:get("minion_" .. breed_name .. "_g") or 255
-                local b = mod:get("minion_" .. breed_name .. "_b") or 255
+    if breed_data and breed_data.units then
+        for category, unit_list in pairs(breed_data.units) do
+            for _, unit_info in ipairs(unit_list) do
+                local breed_name = unit_info.id
                 
+
+                local r = mod:get("minion_" .. breed_name .. "_r") or unit_info.r or 255
+                local g = mod:get("minion_" .. breed_name .. "_g") or unit_info.g or 255
+                local b = mod:get("minion_" .. breed_name .. "_b") or unit_info.b or 255
+                local render_dist = mod:get("minion_" .. breed_name .. "_dist") or unit_info.dist or 30
+                local MAX_DIST_SQ = render_dist * render_dist
+
                 local outline_key = "xline_" .. breed_name
+
+                local function check_distance_visibility(unit)
+                    if not unit or not Unit.alive(unit) then return false end
+                    if not HEALTH_ALIVE[unit] then return false end
+
+                    local player_manager = Managers.player
+                    if not player_manager then return false end
+                    
+                    local local_player = player_manager:local_player(1)
+                    if not local_player then return false end
+                    
+                    local player_unit = local_player.player_unit
+                    if not player_unit then return false end
+
+                    local unit_pos = Unit_local_position(unit, 1)
+                    local player_pos = Unit_local_position(player_unit, 1)
+                    
+                    return Vector3_distance_squared(unit_pos, player_pos) < MAX_DIST_SQ
+                end
 
                 OutlineSettings.MinionOutlineExtension[outline_key] = {
                     priority = 100,
-                    material_layers = { "minion_outline", "minion_outline_reversed_depth" },
+                    material_layers = { "minion_outline" },
                     color = { r/255, g/255, b/255 },
                     visibility_check = check_distance_visibility,
                 }
@@ -134,10 +136,10 @@ override_settings = function()
     end
 
     recover_override_settings = function()
-        if minion_data and minion_data.names then
-            for _, breed_list in pairs(minion_data.names) do
-                for _, breed_name in ipairs(breed_list) do
-                    OutlineSettings.MinionOutlineExtension["xline_" .. breed_name] = nil
+        if breed_data and breed_data.units then
+            for _, unit_list in pairs(breed_data.units) do
+                for _, unit_info in ipairs(unit_list) do
+                    OutlineSettings.MinionOutlineExtension["xline_" .. unit_info.id] = nil
                 end
             end
         end

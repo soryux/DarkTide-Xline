@@ -1,108 +1,74 @@
 local mod = get_mod("Xline")
-local minion_data = mod:io_dofile("Xline/scripts/mods/Xline/minion_data")
+local breed_file_path = "Xline/scripts/mods/Xline/Xbreed"
+local breed_data = mod:io_dofile(breed_file_path)
+local function get_comment_name(id)
+    local content = mod:io_read_content(breed_file_path)
+    if content then
+        for line in content:gmatch("[^\r\n]+") do
+            if line:find('id = "' .. id .. '"') then
+                local comment = line:match("%-%-%s*(.+)$")
+                if comment then return comment:gsub("%s+$", "") end
+            end
+        end
+    end
+    return nil
+end
 
-local category_order = {
-    "控制型专家",
-    "专家",
-    "远程精英",
-    "近战精英",
-    "远程小兵",    
-    "近战小兵",
-    "怪物", 
-}
+local category_order = { "control_specialist", "specialist", "ranged_elite", "melee_elite", "ranged_minion", "melee_minion", "monster" }
 
 local data = {
-    name = "Xline",
-    description = "动态轮廓显示",
+    name = mod:localize("mod_name"),
     is_togglable = true, 
     options = {
         widgets = {
-            {
-                setting_id    = "global_enable",
-                type          = "checkbox",
-                default_value = true,
-                title         = "开启",
-            },
-            {
-                setting_id    = "render_distance",
-                type          = "numeric",
-                default_value = 30,
-                range         = {10, 100},
-                step_size_value = 5,
-                title         = "显示距离 (米)",
-            },
+            { setting_id = "global_enable", type = "checkbox", default_value = true, title = "global_enable" },
         }
     }
 }
 
-if minion_data and minion_data.names then
-    for _, category_name in ipairs(category_order) do
-        local breed_list = minion_data.names[category_name]
-
-        if breed_list then
+if breed_data and breed_data.units then
+    for _, category in ipairs(category_order) do
+        local unit_list = breed_data.units[category]
+        if unit_list then
             local category_group = {
-                setting_id = "group_" .. category_name,
+                setting_id = "group_" .. category,
                 type = "group",
-                title = category_name,
+                title = "cat_" .. category,
                 sub_widgets = {}
             }
-
-            for _, breed_name in ipairs(breed_list) do
+            for _, unit_info in ipairs(unit_list) do
+                local breed_name = unit_info.id
                 
-                local final_title = ""
+                -- 优先级 1: 官翻 A
+                local display_name = Managers.localization:localize("loc_breed_name_" .. breed_name)
                 
-                if minion_data.display_name and minion_data.display_name[breed_name] then
-                    local custom_name = minion_data.display_name[breed_name]
-                    
-                    
-                    if string.find(custom_name, "^loc_") then
-                        final_title = Localize(custom_name)
-                    else
-                        
-                        final_title = custom_name
-                    end
-                else
-                    
-                    final_title = Localize("loc_breed_display_name_" .. breed_name)
+                -- 优先级 2: 官翻 B
+                if not display_name or display_name:find("<") or display_name == "" then
+                    display_name = Managers.localization:localize("loc_breed_display_name_" .. breed_name)
                 end
-                local unit_widgets = {
-                    setting_id = "unit_group_" .. breed_name,
+
+                -- 优先级 3: Xbreed 里的中文注释
+                if not display_name or display_name:find("<") or display_name == "" then
+                    display_name = get_comment_name(breed_name)
+                end
+
+                -- 优先级 4: 原始 ID
+                if not display_name or display_name == "" then
+                    display_name = breed_name
+                end
+
+                table.insert(category_group.sub_widgets, {
+                    setting_id = "minion_" .. breed_name .. "_group",
                     type = "group",
-                    title = final_title, 
+                    title = display_name,
                     sub_widgets = {
-                        {
-                            setting_id    = "minion_" .. breed_name .. "_enable",
-                            type          = "checkbox",
-                            title         = "启用",
-                            default_value = false, 
-                        },
-                        {
-                            setting_id      = "minion_" .. breed_name .. "_r",
-                            title           = "颜色: 红 (R)",
-                            type            = "numeric",
-                            default_value   = 0,
-                            range           = {0, 255},
-                            decimals_number = 0,
-                        },
-                        {
-                            setting_id      = "minion_" .. breed_name .. "_g",
-                            title           = "颜色: 绿 (G)",
-                            type            = "numeric",
-                            default_value   = 0,
-                            range           = {0, 255},
-                            decimals_number = 0,
-                        },
-                        {
-                            setting_id      = "minion_" .. breed_name .. "_b",
-                            title           = "颜色: 蓝 (B)",
-                            type            = "numeric",
-                            default_value   = 0,
-                            range           = {0, 255},
-                            decimals_number = 0,
-                        },
+                        { setting_id = "minion_" .. breed_name .. "_enable", title = "unit_enable", type = "checkbox", default_value = unit_info.enabled },
+                        { setting_id = "minion_" .. breed_name .. "_dist", title = "render_distance", type = "numeric", default_value = unit_info.dist or 30, range = {1, 100} },
+                        { setting_id = "minion_" .. breed_name .. "_r", title = "color_r", type = "numeric", default_value = unit_info.r or 255, range = {0, 255} },
+                        { setting_id = "minion_" .. breed_name .. "_g", title = "color_g", type = "numeric", default_value = unit_info.g or 255, range = {0, 255} },
+                        { setting_id = "minion_" .. breed_name .. "_b", title = "color_b", type = "numeric", default_value = unit_info.b or 255, range = {0, 255} },
                     }
-                }
-                table.insert(category_group.sub_widgets, unit_widgets)
+                })
             end
             table.insert(data.options.widgets, category_group)
         end
