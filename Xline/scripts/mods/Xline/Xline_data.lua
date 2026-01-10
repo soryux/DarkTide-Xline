@@ -1,18 +1,25 @@
 local mod = get_mod("Xline")
 local breed_file_path = "Xline/scripts/mods/Xline/Xbreed"
-local breed_data = mod:io_dofile(breed_file_path)
+local loc_file_path = "Xline/scripts/mods/Xline/Xline_localization"
 
-local function get_comment_name(id)
-    local content = mod:io_read_content(breed_file_path)
-    if content then
-        for line in content:gmatch("[^\r\n]+") do
-            if line:find('id = "' .. id .. '"') then
-                local comment = line:match("%-%-%s*(.+)$")
-                if comment then return comment:gsub("%s+$", "") end
-            end
+local breed_data = mod:io_dofile(breed_file_path)
+local loc_data = mod:io_dofile(loc_file_path)
+
+local function get_current_language()
+    return Application.user_setting("language_id") or "en"
+end
+
+local current_lang = get_current_language()
+local function safe_localize(key)
+    if loc_data and loc_data[key] then
+        if loc_data[key][current_lang] then
+            return loc_data[key][current_lang]
+        end
+        if loc_data[key]["en"] then
+            return loc_data[key]["en"]
         end
     end
-    return nil
+    return key
 end
 
 local category_order = { "control_specialist", "specialist", "ranged_elite", "melee_elite", "ranged_minion", "melee_minion", "monster" }
@@ -28,7 +35,7 @@ local category_to_game_loc = {
 }
 
 local data = {
-    name = mod:localize("mod_name"),
+    name = safe_localize("mod_name"),
     is_togglable = true, 
     options = {
         widgets = {
@@ -45,7 +52,7 @@ if breed_data and breed_data.units then
             local cat_title = Managers.localization and Managers.localization:localize(game_loc_key)
             
             if not cat_title or cat_title:find("<") or cat_title == "" then
-                cat_title = mod:localize("cat_" .. category)
+                cat_title = safe_localize("cat_" .. category)
             end
             
             if not cat_title or cat_title:find("<") or cat_title == "" then
@@ -62,22 +69,25 @@ if breed_data and breed_data.units then
             for _, unit_info in ipairs(unit_list) do
                 local breed_name = unit_info.id
                 local translate_key = unit_info.translate_key
-                
                 local display_name = Managers.localization and Managers.localization:localize("loc_breed_name_" .. breed_name)
                 
                 if not display_name or display_name:find("<") or display_name == "" then
                     display_name = Managers.localization and Managers.localization:localize("loc_breed_display_name_" .. breed_name)
                 end
 
+                if (not display_name or display_name:find("<") or display_name == "") and unit_info.comment then
+                    display_name = unit_info.comment
+                end
+
                 if (not display_name or display_name:find("<") or display_name == "") and translate_key then
-                    display_name = mod:localize(translate_key)
+                    local localized = safe_localize(translate_key)
+
+                    if localized ~= translate_key then
+                        display_name = localized
+                    end
                 end
 
-                if not display_name or display_name:find("<") or display_name == "" then
-                    display_name = get_comment_name(breed_name)
-                end
-
-                if not display_name or display_name == "" then
+                if not display_name or display_name == "" or display_name:find("<") then
                     display_name = breed_name
                 end
 
