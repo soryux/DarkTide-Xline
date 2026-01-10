@@ -14,8 +14,8 @@ m.units.control_specialist = {
 -- ==================== 输出专家 ====================
 m.units.specialist = {
 	{ id = "chaos_poxwalker_bomber",   translate_key = "translate_chaos_poxwalker_bomber",   r=100, g=255, b=100, dist=30, enabled=true, comment = "瘟疫爆破手" },
-	{ id = "renegade_grenadier",       translate_key = "translate_renegade_grenadier",       r=100, g=255, b=100, dist=50, enabled=true, comment = "血痂轰炸者" },
-	{ id = "cultist_grenadier",        translate_key = "translate_cultist_grenadier",        r=100, g=255, b=100, dist=50, enabled=true, comment = "渣滓剧毒轰炸者" },
+	{ id = "renegade_grenadier",       translate_key = "translate_renegade_grenadier",       r=100, g=255, b=100, dist=100, enabled=true, comment = "血痂轰炸者" },
+	{ id = "cultist_grenadier",        translate_key = "translate_cultist_grenadier",        r=100, g=255, b=100, dist=100, enabled=true, comment = "渣滓剧毒轰炸者" },
 	{ id = "renegade_sniper",          translate_key = "translate_renegade_sniper",          r=255, g=255, b=255, dist=100, enabled=true, comment = "血痂狙击手" },
 	{ id = "renegade_flamer",          translate_key = "translate_renegade_flamer",          r=255, g=120, b=120, dist=30, enabled=true, comment = "血痂火焰兵" },
 	{ id = "cultist_flamer",           translate_key = "translate_cultist_flamer",           r=255, g=120, b=120, dist=30, enabled=true, comment = "渣滓剧毒火焰兵" },
