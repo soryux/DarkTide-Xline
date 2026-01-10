@@ -1,6 +1,7 @@
 local mod = get_mod("Xline")
 local breed_file_path = "Xline/scripts/mods/Xline/Xbreed"
 local breed_data = mod:io_dofile(breed_file_path)
+
 local function get_comment_name(id)
     local content = mod:io_read_content(breed_file_path)
     if content then
@@ -16,6 +17,16 @@ end
 
 local category_order = { "control_specialist", "specialist", "ranged_elite", "melee_elite", "ranged_minion", "melee_minion", "monster" }
 
+local category_to_game_loc = {
+    control_specialist = "loc_glossary_specialists_title",
+    specialist = "loc_glossary_specialists_title",
+    ranged_elite = "loc_glossary_elites_title",
+    melee_elite = "loc_glossary_elites_title",
+    ranged_minion = "loc_glossary_minions_title",
+    melee_minion = "loc_glossary_minions_title",
+    monster = "loc_glossary_monstrosities_title"
+}
+
 local data = {
     name = mod:localize("mod_name"),
     is_togglable = true, 
@@ -30,29 +41,42 @@ if breed_data and breed_data.units then
     for _, category in ipairs(category_order) do
         local unit_list = breed_data.units[category]
         if unit_list then
+            local game_loc_key = category_to_game_loc[category]
+            local cat_title = Managers.localization and Managers.localization:localize(game_loc_key)
+            
+            if not cat_title or cat_title:find("<") or cat_title == "" then
+                cat_title = mod:localize("cat_" .. category)
+            end
+            
+            if not cat_title or cat_title:find("<") or cat_title == "" then
+                cat_title = category:gsub("_", " "):upper()
+            end
+
             local category_group = {
                 setting_id = "group_" .. category,
                 type = "group",
-                title = "cat_" .. category,
+                title = cat_title,
                 sub_widgets = {}
             }
+
             for _, unit_info in ipairs(unit_list) do
                 local breed_name = unit_info.id
+                local translate_key = unit_info.translate_key
                 
-                -- 优先级 1: 官翻 A
-                local display_name = Managers.localization:localize("loc_breed_name_" .. breed_name)
+                local display_name = Managers.localization and Managers.localization:localize("loc_breed_name_" .. breed_name)
                 
-                -- 优先级 2: 官翻 B
                 if not display_name or display_name:find("<") or display_name == "" then
-                    display_name = Managers.localization:localize("loc_breed_display_name_" .. breed_name)
+                    display_name = Managers.localization and Managers.localization:localize("loc_breed_display_name_" .. breed_name)
                 end
 
-                -- 优先级 3: Xbreed 里的中文注释
+                if (not display_name or display_name:find("<") or display_name == "") and translate_key then
+                    display_name = mod:localize(translate_key)
+                end
+
                 if not display_name or display_name:find("<") or display_name == "" then
                     display_name = get_comment_name(breed_name)
                 end
 
-                -- 优先级 4: 原始 ID
                 if not display_name or display_name == "" then
                     display_name = breed_name
                 end
