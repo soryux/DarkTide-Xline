@@ -60,7 +60,7 @@ m.units.melee_minion = {
 -- ==================== Boss  ====================
 m.units.monster = {
 	{ id = "chaos_beast_of_nurgle",    translate_key = "translate_chaos_beast_of_nurgle",    r=255, g=0,   b=255, dist=50, enabled=false, comment = "纳垢兽" },
-	{ id = "chaos_daemonhost",         translate_key = "translate_chaos_daemonhost",         r=255, g=0,   b=255, dist=100, enabled=true, comment = "恶魔宿主" },
+	{ id = "chaos_daemonhost",         translate_key = "translate_chaos_daemonhost",         r=255, g=255, b=0, dist=100, enabled=true, comment = "恶魔宿主" },
 	{ id = "chaos_spawn",              translate_key = "translate_chaos_spawn",              r=255, g=0,   b=255, dist=50, enabled=false, comment = "混沌魔物" },
 	{ id = "chaos_plague_ogryn",       translate_key = "translate_chaos_plague_ogryn",       r=255, g=0,   b=255, dist=50, enabled=false, comment = "瘟疫欧格林" },
 	{ id = "chaos_plague_ogryn_sprayer", translate_key = "translate_chaos_plague_ogryn_sprayer", r=255, g=0,   b=255, dist=50, enabled=false, comment = "毒素欧格林" },
@@ -69,3 +69,4 @@ m.units.monster = {
 
 
 return m
+
