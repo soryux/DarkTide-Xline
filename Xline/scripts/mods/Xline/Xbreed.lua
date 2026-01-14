@@ -13,7 +13,7 @@ m.units.control_specialist = {
 
 -- ==================== 输出专家 ====================
 m.units.specialist = {
-	{ id = "chaos_poxwalker_bomber",   translate_key = "translate_chaos_poxwalker_bomber",   r=100, g=255, b=100, dist=30, enabled=true, comment = "瘟疫爆破手" },
+	{ id = "chaos_poxwalker_bomber",   translate_key = "translate_chaos_poxwalker_bomber",   r=0, g=255, b=0, dist=30, enabled=true, comment = "瘟疫爆破手" },
 	{ id = "renegade_grenadier",       translate_key = "translate_renegade_grenadier",       r=0, g=255, b=0, dist=100, enabled=true, comment = "血痂轰炸者" },
 	{ id = "cultist_grenadier",        translate_key = "translate_cultist_grenadier",        r=0, g=255, b=0, dist=100, enabled=true, comment = "渣滓剧毒轰炸者" },
 	{ id = "renegade_sniper",          translate_key = "translate_renegade_sniper",          r=0, g=255, b=0, dist=100, enabled=true, comment = "血痂狙击手" },
